@@ -1,3 +1,5 @@
+import './styles.scss';
 import { App } from "./app/app";
 
-let app = new App();
+let container = document.getElementById('app');
+let app = new App(container);

@@ -53,6 +53,10 @@ module.exports = {
 
     new HtmlWebpackPlugin({
       template: './src/index.html'
+    }),
+
+    new webpack.DefinePlugin({
+      VERSION: JSON.stringify(process.env.npm_package_version),
     })
   ]
 };

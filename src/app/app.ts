@@ -1,9 +1,17 @@
-import '../styles.scss';
+
+import './app.scss';
+import { Pkg } from "../package";
+
+const html = require('./app.html');
 
 export class App
 {
-	constructor()
+	private container:HTMLElement;
+
+	constructor(container:HTMLElement)
 	{
-		console.log('APP STARTED')
+		this.container = container;
+		this.container.innerHTML = html;
+		console.log('APP STARTED', Pkg().version)
 	}
 }
