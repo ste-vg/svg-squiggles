@@ -1,0 +1,42 @@
+{
+  "name": "typescript-webpack-boilerplate",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "webpack-dev-server --inline --progress --port 3000",
+    "build": "rimraf docs && webpack --config config/webpack.prod.js --progress --profile --bail"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/steveg3003/typescript-webpack-boilerplate.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/steveg3003/typescript-webpack-boilerplate/issues"
+  },
+  "homepage": "https://github.com/steveg3003/typescript-webpack-boilerplate#readme",
+  "dependencies": {
+    
+  },
+  "devDependencies": {
+    "fs": "0.0.1-security",
+    "html-loader": "^0.5.4",
+    "html-webpack-plugin": "^2.30.1",
+    "rimraf": "^2.6.2",
+    "style-loader": "^0.19.1",
+    "webpack-dev-server": "^2.10.0",
+    "webpack-merge": "^4.1.1",
+    "awesome-typescript-loader": "^3.4.1",
+    "css-loader": "^0.28.8",
+    "extract-text-webpack-plugin": "^3.0.2",
+    "file-loader": "^1.1.6",
+    "node-sass": "^4.7.2",
+    "sass-loader": "^6.0.6",
+    "typescript": "^2.6.2",
+    "url-loader": "^0.6.2",
+    "webpack": "^3.10.0"
+  }
+}
