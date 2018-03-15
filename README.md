@@ -25,4 +25,4 @@ To create a new build run
 npm run build
 ~~~~
 
-Which will create a new version of the app in the docs folder, this is usefull if you want to use Github pages to host the app online.
+Which will create a new version of the app in a 'dists' folder.
