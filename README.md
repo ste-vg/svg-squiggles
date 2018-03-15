@@ -1,4 +1,5 @@
-# SVG Color Splash
+# SVG Sqwiggles
+Colorful, Mouse following, sqwiggles. Written with Typescript, GSAP and rxjs.
 
 First run 
 	

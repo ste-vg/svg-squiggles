@@ -1,5 +1,5 @@
 {
-  "name": "typescript-webpack-boilerplate",
+  "name": "svg-sqwiggles",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/steveg3003/typescript-webpack-boilerplate.git"
+    "url": "git+https://github.com/ste-vg/svg-sqwiggles.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/steveg3003/typescript-webpack-boilerplate/issues"
+    "url": "https://github.com/ste-vg/svg-sqwiggles/issues"
   },
-  "homepage": "https://github.com/steveg3003/typescript-webpack-boilerplate#readme",
+  "homepage": "https://github.com/ste-vg/svg-sqwiggles#readme",
   "dependencies": {
     "gsap": "^1.20.4",
     "rxjs": "^5.5.7"
