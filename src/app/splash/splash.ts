@@ -1,9 +1,9 @@
 import { SplashSettings } from "./SplashSettings";
 import { SplashState } from "./SplashState";
-//import { TweenLite, TimelineLite, Power2 } from "gsap";
+import { TweenLite, Power2 } from "gsap";
 
-declare var TweenLite:any;
-declare var Power2:any;
+// declare var TweenLite:any;
+// declare var Power2:any;
 
 export class Splash
 {

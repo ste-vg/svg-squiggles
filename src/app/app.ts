@@ -7,6 +7,8 @@ import { Pkg } from "../package";
 import { Sqwiggle } from "./sqwiggle/sqwiggle";
 import { SqwiggleSettings } from "./sqwiggle/Settings";
 import { SqwiggleState } from './sqwiggle/State';
+import { Position } from './Position';
+import { Input } from './input';
 
 const html = require('./app.html');
 
@@ -15,10 +17,12 @@ export class App
 	private container:HTMLElement;
 	private svg:HTMLElement;
 	private sqwiggles:Sqwiggle[] = [];
-	private lineCount:number = 10;	
 
 	private width: number = 600;
 	private height: number = 600;
+
+	private lastMousePosition:Position;
+	private direction:Position;
 
 	constructor(container:HTMLElement)
 	{
@@ -30,6 +34,63 @@ export class App
 		this.onResize();
 
 		this.tick();
+
+		let input = new Input(this.container);
+		
+		//input.moves.subscribe((position:Position) => this.createSqiggFromMouse(position))
+		setInterval(() => this.createRandomSqwig(), 150)
+	}
+
+	createSqiggFromMouse(position:Position)
+	{
+		let sections:number = 2;
+		if(this.lastMousePosition)
+		{
+			let newDirection:Position = {x: 0, y: 0};
+			let xAmount = Math.abs(this.lastMousePosition.x - position.x);
+			let yAmount = Math.abs(this.lastMousePosition.y - position.y);
+
+			if(xAmount > yAmount)
+			{
+				newDirection.x = this.lastMousePosition.x - position.x < 0 ? 1 : -1;
+				sections += Math.round(xAmount)
+			}
+			else
+			{
+				newDirection.y = this.lastMousePosition.y - position.y < 0 ? 1 : -1;
+				sections += Math.round(yAmount)
+			}
+			this.direction = newDirection;
+		}
+
+		if(this.direction)
+		{
+			let settings:SqwiggleSettings = {
+				x: this.lastMousePosition.x,
+				y: this.lastMousePosition.y,
+				directionX: this.direction.x,
+				directionY: this.direction.y,
+				sections: sections
+			}
+			let newSqwig = new Sqwiggle(this.svg, settings);
+			this.sqwiggles.push(newSqwig);
+		}
+		
+		this.lastMousePosition = position;
+	}
+
+	createRandomSqwig()
+	{
+
+		let settings:SqwiggleSettings = {
+			x: Math.random() * this.width,
+			y: Math.random() * this.height,
+			directionX: 1,
+			directionY: 0,
+			sections: 10 + Math.round(Math.random() * 10)
+		}
+		let newSqwig = new Sqwiggle(this.svg, settings);
+		this.sqwiggles.push(newSqwig);
 	}
 
 	onResize()
@@ -43,17 +104,10 @@ export class App
 
 	tick()
 	{
-		if(this.sqwiggles.length < this.lineCount)
-		{
-			let settings:SqwiggleSettings = {
-				x: this.width / 2,
-				y: this.height / 2,
-				directionX: 1,
-				directionY: 0
-			}
-			let newSqwig = new Sqwiggle(this.svg, settings);
-			this.sqwiggles.push(newSqwig);
-		}
+		// if(this.direction && this.sqwiggles.length < this.lineCount)
+		// {
+			
+		// }
 
 		let step = this.sqwiggles.length - 1;
 

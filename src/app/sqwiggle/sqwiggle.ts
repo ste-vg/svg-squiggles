@@ -1,11 +1,12 @@
 import { SqwiggleSettings } from "./Settings";
 import { SqwiggleState } from "./State";
+import { TweenLite, Power2 } from "gsap";
 
 export class Sqwiggle
 {
-    private grid:number = 10;
+    private grid:number = 40;
     
-    private sqwig:SVGElement;
+    private sqwig:SVGPathElement;
     private settings:SqwiggleSettings;
     public state:SqwiggleState = SqwiggleState.ready;
 
@@ -17,16 +18,34 @@ export class Sqwiggle
         this.sqwig.setAttribute('d', this.createLine())
         this.sqwig.style.fill = 'none';
         this.sqwig.style.stroke = this.getColor();
-        this.sqwig.style.strokeWidth = '5px';
+        this.sqwig.style.strokeWidth = '20px';
+        this.sqwig.style.strokeLinecap = "round"
+        
+        this.settings.length = this.sqwig.getTotalLength();
+        this.settings.chunkLength = this.settings.length / 3; //(this.settings.sections * 2) + (Math.random() * 40);
+        this.settings.progress = - this.settings.length;
+
+        this.sqwig.style.strokeDasharray= `${this.settings.chunkLength}, ${this.settings.length + this.settings.chunkLength}`
+        this.sqwig.style.strokeDashoffset = `${this.settings.progress}`
 
         stage.appendChild(this.sqwig);
 
         this.state = SqwiggleState.animating;
+
+        TweenLite.to(this.settings, this.settings.sections * 0.25, {
+            progress: this.settings.chunkLength,
+            ease: Power2.easeInOut,
+            onComplete: () => 
+            {
+                this.state = SqwiggleState.ended;
+                this.sqwig.remove();
+            }
+        })
     }
 
     public update()
     {
-
+        this.sqwig.style.strokeDashoffset = `${this.settings.progress}`;
     }
 
     private createLine():string
@@ -42,7 +61,7 @@ export class Sqwiggle
             "Q"
         ]
 
-        let steps = 2 + Math.round(Math.random() * 5);
+        let steps = this.settings.sections;
         let step = 0;
         let getNewDirection = () => Math.random() < 0.5 ? -1 : 1;
 
@@ -55,7 +74,7 @@ export class Sqwiggle
             path.push('' + x);
             path.push('' + y);
             
-            if(step % 2 != 0)
+            if(step > 1 && step % 2 != 0)
             {
                 dx = dx == 0 ? getNewDirection() : 0;
                 dy = dy == 0 ? getNewDirection() : 0;
