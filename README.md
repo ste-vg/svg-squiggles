@@ -3,7 +3,7 @@ Colorful, mouse following, squiggles. Written with Typescript, GSAP and rxjs.
 
 Demo https://codepen.io/steveg3003/full/qobgBM/
 
-###Getting started
+### Getting started
 First you need to download the the packages
 	
 ~~~~
