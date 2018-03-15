@@ -1,9 +1,10 @@
 # SVG squiggles
-Colorful, Mouse following, squiggles. Written with Typescript, GSAP and rxjs.
+Colorful, mouse following, squiggles. Written with Typescript, GSAP and rxjs.
 
 Demo https://codepen.io/steveg3003/full/qobgBM/
 
-First run 
+###Getting started
+First you need to download the the packages
 	
 ~~~~
 npm install
