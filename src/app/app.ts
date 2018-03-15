@@ -42,9 +42,21 @@ export class App
 		{
 			for(let i = 0; i < 3; i++) this.createSqwigFromMouse(position);
 		})
-		if(location.pathname.match(/fullcpgrid/i)) setInterval(() => this.createRandomSqwig(), 100)
+
+		input.ends.subscribe((position:Position) => 
+		{
+			this.burst(true);
+		})
+
+
+		if(location.pathname.match(/fullcpgrid/i)) setInterval(() => this.burst(false), 1000)
 
 		Observable.fromEvent(window, "resize").subscribe(() => this.onResize())
+	}
+
+	burst(fromMouse:boolean = false)
+	{
+		for(let i = 0; i < 5; i++) this.createRandomSqwig(fromMouse);
 	}
 
 	createSqwigFromMouse(position:Position)
@@ -85,21 +97,22 @@ export class App
 		this.lastMousePosition = position;
 	}
 
-	createRandomSqwig()
+	createRandomSqwig(fromMouse:boolean = false)
 	{
 		let dx = Math.random();
 		if(dx > 0.5) dx = dx > 0.75 ? 1 : -1;
-		let dy = 0;
+		else dx = 0;
+		let dy= 0;
 		if(dx == 0) dx = Math.random() > 0.5 ? 1 : -1;
 
 		let settings:SquiggleSettings = {
-			x: Math.round(Math.random() * (this.width / this.grid))  * this.grid,
-			y: Math.round(Math.random() * (this.height / this.grid)) * this.grid,
+			x: fromMouse ? this.lastMousePosition.x : this.width / 2, // Math.round(Math.random() * (this.width / this.grid))  * this.grid,
+			y: fromMouse ? this.lastMousePosition.y : this.height / 2, //Math.round(Math.random() * (this.height / this.grid)) * this.grid,
 			directionX: dx,
 			directionY: dy,
-			sections: 10 + Math.round(Math.random() * 10)
+			sections: 5 + Math.round(Math.random() * 15)
 		}
-		let newSqwig = new Squiggle(this.svg, settings, this.grid/2 + Math.random() * this.grid);
+		let newSqwig = new Squiggle(this.svg, settings, this.grid/2 + Math.random() * this.grid/2);
 		this.squiggles.push(newSqwig);
 	}
 

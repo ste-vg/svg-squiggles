@@ -1,6 +1,6 @@
 import { SquiggleSettings } from "./Settings";
 import { SquiggleState } from "./State";
-import { TweenLite, Power2 } from "gsap";
+import { TweenLite, Power1 } from "gsap";
 
 interface SquiggleSet
 {
@@ -56,7 +56,7 @@ export class Squiggle
         TweenLite.to(settings, settings.sections * 0.1, {
             progress: - settings.length,
             width: settings.sections * 0.9,
-            ease: Power2.easeOut,
+            ease: Power1.easeOut,
             delay: index * (settings.sections * 0.01),
             onComplete: () => 
             {
