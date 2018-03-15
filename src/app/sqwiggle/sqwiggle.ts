@@ -2,62 +2,87 @@ import { SqwiggleSettings } from "./Settings";
 import { SqwiggleState } from "./State";
 import { TweenLite, Power2 } from "gsap";
 
+interface SqwiggleSet
+{
+    path: SVGPathElement;
+    settings: SqwiggleSettings;
+}
+
 export class Sqwiggle
 {
     private grid:number;
-    
+    private stage:HTMLElement;
     private sqwig:SVGPathElement;
+    private sqwigs: SqwiggleSet[] = [];
     private settings:SqwiggleSettings;
     public state:SqwiggleState = SqwiggleState.ready;
 
     constructor(stage:HTMLElement, settings:SqwiggleSettings, grid:number)
     {
         this.grid = grid;
-        this.settings = settings;
-
-        this.sqwig = document.createElementNS("http://www.w3.org/2000/svg", 'path')
-        this.sqwig.setAttribute('d', this.createLine())
-        this.sqwig.style.fill = 'none';
-        this.sqwig.style.stroke = this.getColor();
-        
-        this.sqwig.style.strokeLinecap = "round"
-        
-        this.settings.width = 0;
-        this.settings.length = this.sqwig.getTotalLength();
-        this.settings.chunkLength = this.settings.length / 6; //(this.settings.sections * 2) + (Math.random() * 40);
-        this.settings.progress = this.settings.chunkLength;
-
-        this.sqwig.style.strokeDasharray= `${this.settings.chunkLength}, ${this.settings.length + this.settings.chunkLength}`
-        this.sqwig.style.strokeDashoffset = `${this.settings.progress}`
-
-        stage.appendChild(this.sqwig);
+        this.stage = stage;
+   
+        settings.width = 0;
+        settings.opacity = 1;
 
         this.state = SqwiggleState.animating;
+        let path = this.createLine(settings);
+        let sqwigCount:number = 3;
+        for(let i = 0; i < sqwigCount; i++)
+        {
+            this.createSqwig(i, sqwigCount, path, JSON.parse(JSON.stringify(settings)) as SqwiggleSettings, i == sqwigCount - 1)
+        }
+    }
 
-        TweenLite.to(this.settings, this.settings.sections * 0.1, {
-            progress: - this.settings.length,
-            width: this.settings.sections * 0.9,
+    createSqwig(index:number, total:number, path:string, settings:SqwiggleSettings, forceWhite:boolean)
+    {
+        let sqwig = document.createElementNS("http://www.w3.org/2000/svg", 'path')
+            sqwig.setAttribute('d', path)
+            sqwig.style.fill = 'none';
+            sqwig.style.stroke = forceWhite ? '#303030' : this.getColor();
+            sqwig.style.strokeLinecap = "round"
+        
+        settings.length =  sqwig.getTotalLength();
+        settings.chunkLength = settings.length / 6; //(settings.sections * 2) + (Math.random() * 40);
+        settings.progress = settings.chunkLength;
+
+        sqwig.style.strokeDasharray= `${settings.chunkLength}, ${settings.length + settings.chunkLength}`
+        sqwig.style.strokeDashoffset = `${settings.progress}`
+
+        this.stage.appendChild(sqwig);
+
+        this.sqwigs.unshift({path: sqwig, settings: settings});
+
+        TweenLite.to(settings, settings.sections * 0.1, {
+            progress: - settings.length,
+            width: settings.sections * 0.9,
             ease: Power2.easeOut,
+            delay: index * (settings.sections * 0.01),
             onComplete: () => 
             {
-                this.state = SqwiggleState.ended;
-                this.sqwig.remove();
+                if(index = total - 1) this.state = SqwiggleState.ended;
+                sqwig.remove();
             }
         })
     }
 
     public update()
     {
-        this.sqwig.style.strokeDashoffset = `${this.settings.progress}`;
-        this.sqwig.style.strokeWidth = `${this.settings.width}px`;
+        this.sqwigs.map((set: SqwiggleSet) => 
+        {
+            set.path.style.strokeDashoffset = `${set.settings.progress}`;
+            set.path.style.strokeWidth = `${set.settings.width}px`;
+            set.path.style.opacity = `${set.settings.opacity}`;
+        })
+        
     }
 
-    private createLine():string
+    private createLine(settings:SqwiggleSettings):string
     {
-        let x = this.settings.x;
-        let y = this.settings.y;
-        let dx = this.settings.directionX;
-        let dy = this.settings.directionY;
+        let x = settings.x;
+        let y = settings.y;
+        let dx = settings.directionX;
+        let dy = settings.directionY;
         let path:string[] = [
             'M',
             '' + x,
@@ -65,19 +90,19 @@ export class Sqwiggle
             "Q"
         ]
 
-        let steps = this.settings.sections;
+        let steps = settings.sections;
         let step = 0;
         let getNewDirection = (direction: string, goAnywhere:boolean) => 
         {
-            if(!goAnywhere && this.settings['direction' + direction.toUpperCase()] != 0) return this.settings['direction' + direction.toUpperCase()];
+            if(!goAnywhere && settings['direction' + direction.toUpperCase()] != 0) return settings['direction' + direction.toUpperCase()];
             return Math.random() < 0.5 ? -1 : 1;
         }
 
         while(step < steps * 2)
         {
             step++;
-            x += (dx + (step/ 100)) * this.grid;
-            y += (dy + (step/ 100)) * this.grid;
+            x += (dx * (step/ 30)) * this.grid;
+            y += (dy * (step/ 30)) * this.grid;
             if(step != 1) path.push(',');
             path.push('' + x);
             path.push('' + y);
@@ -95,9 +120,9 @@ export class Sqwiggle
     private getColor():string
     {
         let offset = Math.round(Math.random() * 100)
-        var r = Math.sin(0.3 * offset) * 55 + 200;
-        var g = Math.sin(0.3 * offset + 2) * 55 + 200;
-        var b = Math.sin(0.3 * offset + 4) * 55 + 200;
+        var r = Math.sin(0.3 * offset) * 100 + 155;
+        var g = Math.sin(0.3 * offset + 2) * 100 + 155;
+        var b = Math.sin(0.3 * offset + 4) * 100 + 155;
         return "#" + this.componentToHex(r) + this.componentToHex(g) + this.componentToHex(b);
     }
 

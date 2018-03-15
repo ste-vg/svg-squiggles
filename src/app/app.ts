@@ -10,6 +10,8 @@ import { SqwiggleState } from './sqwiggle/State';
 import { Position } from './Position';
 import { Input } from './input';
 
+import { Observable } from "rxjs";
+
 const html = require('./app.html');
 
 export class App
@@ -41,12 +43,14 @@ export class App
 		
 		input.moves.subscribe((position:Position) => 
 		{
-			for(let i = 0; i < 4; i++) this.createSqiggFromMouse(position);
+			for(let i = 0; i < 3; i++) this.createSqwigFromMouse(position);
 		})
-		//setInterval(() => this.createRandomSqwig(), 150)
+		if(location.pathname.match(/fullcpgrid/i)) setInterval(() => this.createRandomSqwig(), 100)
+
+		Observable.fromEvent(window, "resize").subscribe(() => this.onResize())
 	}
 
-	createSqiggFromMouse(position:Position)
+	createSqwigFromMouse(position:Position)
 	{
 		let sections:number = 4;
 		if(this.lastMousePosition)
@@ -77,7 +81,7 @@ export class App
 				directionY: this.direction.y,
 				sections: sections > 20 ? 20 : sections
 			}
-			let newSqwig = new Sqwiggle(this.svg, settings, Math.random() * (sections * 2));
+			let newSqwig = new Sqwiggle(this.svg, settings, 10 + Math.random() * (sections * 1.5));
 			this.sqwiggles.push(newSqwig);
 		}
 		
@@ -86,12 +90,16 @@ export class App
 
 	createRandomSqwig()
 	{
+		let dx = Math.random();
+		if(dx > 0.5) dx = dx > 0.75 ? 1 : -1;
+		let dy = 0;
+		if(dx == 0) dx = Math.random() > 0.5 ? 1 : -1;
 
 		let settings:SqwiggleSettings = {
 			x: Math.round(Math.random() * (this.width / this.grid))  * this.grid,
 			y: Math.round(Math.random() * (this.height / this.grid)) * this.grid,
-			directionX: 1,
-			directionY: 0,
+			directionX: dx,
+			directionY: dy,
 			sections: 10 + Math.round(Math.random() * 10)
 		}
 		let newSqwig = new Sqwiggle(this.svg, settings, this.grid/2 + Math.random() * this.grid);

@@ -10,4 +10,5 @@ export interface SqwiggleSettings
     chunkLength?: number;
     color?: string;
     progress?: number;
+    opacity?: number;
 }
