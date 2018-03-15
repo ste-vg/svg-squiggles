@@ -1,6 +1,8 @@
 # SVG Sqwiggles
 Colorful, Mouse following, sqwiggles. Written with Typescript, GSAP and rxjs.
 
+Demo https://codepen.io/steveg3003/full/qobgBM/
+
 First run 
 	
 ~~~~
