@@ -1,4 +1,4 @@
-export interface SqwiggleSettings
+export interface SquiggleSettings
 {
     x: number;
     y: number;

@@ -1,4 +1,4 @@
-export enum SqwiggleState
+export enum SquiggleState
 {
     ready,
     animating,

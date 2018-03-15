@@ -1,23 +1,23 @@
-import { SqwiggleSettings } from "./Settings";
-import { SqwiggleState } from "./State";
+import { SquiggleSettings } from "./Settings";
+import { SquiggleState } from "./State";
 import { TweenLite, Power2 } from "gsap";
 
-interface SqwiggleSet
+interface SquiggleSet
 {
     path: SVGPathElement;
-    settings: SqwiggleSettings;
+    settings: SquiggleSettings;
 }
 
-export class Sqwiggle
+export class Squiggle
 {
     private grid:number;
     private stage:HTMLElement;
     private sqwig:SVGPathElement;
-    private sqwigs: SqwiggleSet[] = [];
-    private settings:SqwiggleSettings;
-    public state:SqwiggleState = SqwiggleState.ready;
+    private sqwigs: SquiggleSet[] = [];
+    private settings:SquiggleSettings;
+    public state:SquiggleState = SquiggleState.ready;
 
-    constructor(stage:HTMLElement, settings:SqwiggleSettings, grid:number)
+    constructor(stage:HTMLElement, settings:SquiggleSettings, grid:number)
     {
         this.grid = grid;
         this.stage = stage;
@@ -25,16 +25,16 @@ export class Sqwiggle
         settings.width = 0;
         settings.opacity = 1;
 
-        this.state = SqwiggleState.animating;
+        this.state = SquiggleState.animating;
         let path = this.createLine(settings);
         let sqwigCount:number = 3;
         for(let i = 0; i < sqwigCount; i++)
         {
-            this.createSqwig(i, sqwigCount, path, JSON.parse(JSON.stringify(settings)) as SqwiggleSettings, i == sqwigCount - 1)
+            this.createSqwig(i, sqwigCount, path, JSON.parse(JSON.stringify(settings)) as SquiggleSettings, i == sqwigCount - 1)
         }
     }
 
-    createSqwig(index:number, total:number, path:string, settings:SqwiggleSettings, forceWhite:boolean)
+    createSqwig(index:number, total:number, path:string, settings:SquiggleSettings, forceWhite:boolean)
     {
         let sqwig = document.createElementNS("http://www.w3.org/2000/svg", 'path')
             sqwig.setAttribute('d', path)
@@ -60,7 +60,7 @@ export class Sqwiggle
             delay: index * (settings.sections * 0.01),
             onComplete: () => 
             {
-                if(index = total - 1) this.state = SqwiggleState.ended;
+                if(index = total - 1) this.state = SquiggleState.ended;
                 sqwig.remove();
             }
         })
@@ -68,7 +68,7 @@ export class Sqwiggle
 
     public update()
     {
-        this.sqwigs.map((set: SqwiggleSet) => 
+        this.sqwigs.map((set: SquiggleSet) => 
         {
             set.path.style.strokeDashoffset = `${set.settings.progress}`;
             set.path.style.strokeWidth = `${set.settings.width}px`;
@@ -77,7 +77,7 @@ export class Sqwiggle
         
     }
 
-    private createLine(settings:SqwiggleSettings):string
+    private createLine(settings:SquiggleSettings):string
     {
         let x = settings.x;
         let y = settings.y;

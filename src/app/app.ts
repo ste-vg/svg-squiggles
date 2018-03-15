@@ -1,12 +1,9 @@
 
 import './app.scss';
 import { Pkg } from "../package";
-// import { Splash } from './splash/splash';
-// import { SplashSettings } from './splash/SplashSettings';
-// import { SplashState } from './splash/SplashState';
-import { Sqwiggle } from "./sqwiggle/sqwiggle";
-import { SqwiggleSettings } from "./sqwiggle/Settings";
-import { SqwiggleState } from './sqwiggle/State';
+import { Squiggle } from "./squiggles/squiggle";
+import { SquiggleSettings } from "./squiggles/Settings";
+import { SquiggleState } from './squiggles/State';
 import { Position } from './Position';
 import { Input } from './input';
 
@@ -18,7 +15,7 @@ export class App
 {
 	private container:HTMLElement;
 	private svg:HTMLElement;
-	private sqwiggles:Sqwiggle[] = [];
+	private squiggles:Squiggle[] = [];
 
 	private width: number = 600;
 	private height: number = 600;
@@ -74,15 +71,15 @@ export class App
 
 		if(this.direction)
 		{
-			let settings:SqwiggleSettings = {
+			let settings:SquiggleSettings = {
 				x: this.lastMousePosition.x,
 				y: this.lastMousePosition.y,
 				directionX: this.direction.x,
 				directionY: this.direction.y,
 				sections: sections > 20 ? 20 : sections
 			}
-			let newSqwig = new Sqwiggle(this.svg, settings, 10 + Math.random() * (sections * 1.5));
-			this.sqwiggles.push(newSqwig);
+			let newSqwig = new Squiggle(this.svg, settings, 10 + Math.random() * (sections * 1.5));
+			this.squiggles.push(newSqwig);
 		}
 		
 		this.lastMousePosition = position;
@@ -95,15 +92,15 @@ export class App
 		let dy = 0;
 		if(dx == 0) dx = Math.random() > 0.5 ? 1 : -1;
 
-		let settings:SqwiggleSettings = {
+		let settings:SquiggleSettings = {
 			x: Math.round(Math.random() * (this.width / this.grid))  * this.grid,
 			y: Math.round(Math.random() * (this.height / this.grid)) * this.grid,
 			directionX: dx,
 			directionY: dy,
 			sections: 10 + Math.round(Math.random() * 10)
 		}
-		let newSqwig = new Sqwiggle(this.svg, settings, this.grid/2 + Math.random() * this.grid);
-		this.sqwiggles.push(newSqwig);
+		let newSqwig = new Squiggle(this.svg, settings, this.grid/2 + Math.random() * this.grid);
+		this.squiggles.push(newSqwig);
 	}
 
 	onResize()
@@ -117,24 +114,24 @@ export class App
 
 	tick()
 	{
-		// if(this.direction && this.sqwiggles.length < this.lineCount)
+		// if(this.direction && this.squiggles.length < this.lineCount)
 		// {
 			
 		// }
 
-		let step = this.sqwiggles.length - 1;
+		let step = this.squiggles.length - 1;
 
 		while(step >= 0)
 		{
-			if(this.sqwiggles[step].state != SqwiggleState.ended)
+			if(this.squiggles[step].state != SquiggleState.ended)
 			{
-				this.sqwiggles[step].update();
+				this.squiggles[step].update();
 				
 			}
 			else
 			{
-				this.sqwiggles[step] = null;
-				this.sqwiggles.splice(step, 1);
+				this.squiggles[step] = null;
+				this.squiggles.splice(step, 1);
 			}
 
 			--step;	
