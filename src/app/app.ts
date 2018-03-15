@@ -24,6 +24,8 @@ export class App
 	private lastMousePosition:Position;
 	private direction:Position;
 
+	private grid:number = 40;
+
 	constructor(container:HTMLElement)
 	{
 		console.log(Pkg().version);
@@ -37,13 +39,16 @@ export class App
 
 		let input = new Input(this.container);
 		
-		//input.moves.subscribe((position:Position) => this.createSqiggFromMouse(position))
-		setInterval(() => this.createRandomSqwig(), 150)
+		input.moves.subscribe((position:Position) => 
+		{
+			for(let i = 0; i < 4; i++) this.createSqiggFromMouse(position);
+		})
+		//setInterval(() => this.createRandomSqwig(), 150)
 	}
 
 	createSqiggFromMouse(position:Position)
 	{
-		let sections:number = 2;
+		let sections:number = 4;
 		if(this.lastMousePosition)
 		{
 			let newDirection:Position = {x: 0, y: 0};
@@ -53,12 +58,12 @@ export class App
 			if(xAmount > yAmount)
 			{
 				newDirection.x = this.lastMousePosition.x - position.x < 0 ? 1 : -1;
-				sections += Math.round(xAmount)
+				sections += Math.round(xAmount/4)
 			}
 			else
 			{
 				newDirection.y = this.lastMousePosition.y - position.y < 0 ? 1 : -1;
-				sections += Math.round(yAmount)
+				sections += Math.round(yAmount/4)
 			}
 			this.direction = newDirection;
 		}
@@ -70,9 +75,9 @@ export class App
 				y: this.lastMousePosition.y,
 				directionX: this.direction.x,
 				directionY: this.direction.y,
-				sections: sections
+				sections: sections > 20 ? 20 : sections
 			}
-			let newSqwig = new Sqwiggle(this.svg, settings);
+			let newSqwig = new Sqwiggle(this.svg, settings, Math.random() * (sections * 2));
 			this.sqwiggles.push(newSqwig);
 		}
 		
@@ -83,13 +88,13 @@ export class App
 	{
 
 		let settings:SqwiggleSettings = {
-			x: Math.random() * this.width,
-			y: Math.random() * this.height,
+			x: Math.round(Math.random() * (this.width / this.grid))  * this.grid,
+			y: Math.round(Math.random() * (this.height / this.grid)) * this.grid,
 			directionX: 1,
 			directionY: 0,
 			sections: 10 + Math.round(Math.random() * 10)
 		}
-		let newSqwig = new Sqwiggle(this.svg, settings);
+		let newSqwig = new Sqwiggle(this.svg, settings, this.grid/2 + Math.random() * this.grid);
 		this.sqwiggles.push(newSqwig);
 	}
 

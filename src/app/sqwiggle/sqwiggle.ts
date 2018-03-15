@@ -4,26 +4,28 @@ import { TweenLite, Power2 } from "gsap";
 
 export class Sqwiggle
 {
-    private grid:number = 40;
+    private grid:number;
     
     private sqwig:SVGPathElement;
     private settings:SqwiggleSettings;
     public state:SqwiggleState = SqwiggleState.ready;
 
-    constructor(stage:HTMLElement, settings:SqwiggleSettings)
+    constructor(stage:HTMLElement, settings:SqwiggleSettings, grid:number)
     {
+        this.grid = grid;
         this.settings = settings;
 
         this.sqwig = document.createElementNS("http://www.w3.org/2000/svg", 'path')
         this.sqwig.setAttribute('d', this.createLine())
         this.sqwig.style.fill = 'none';
         this.sqwig.style.stroke = this.getColor();
-        this.sqwig.style.strokeWidth = '20px';
+        
         this.sqwig.style.strokeLinecap = "round"
         
+        this.settings.width = 0;
         this.settings.length = this.sqwig.getTotalLength();
-        this.settings.chunkLength = this.settings.length / 3; //(this.settings.sections * 2) + (Math.random() * 40);
-        this.settings.progress = - this.settings.length;
+        this.settings.chunkLength = this.settings.length / 6; //(this.settings.sections * 2) + (Math.random() * 40);
+        this.settings.progress = this.settings.chunkLength;
 
         this.sqwig.style.strokeDasharray= `${this.settings.chunkLength}, ${this.settings.length + this.settings.chunkLength}`
         this.sqwig.style.strokeDashoffset = `${this.settings.progress}`
@@ -32,9 +34,10 @@ export class Sqwiggle
 
         this.state = SqwiggleState.animating;
 
-        TweenLite.to(this.settings, this.settings.sections * 0.25, {
-            progress: this.settings.chunkLength,
-            ease: Power2.easeInOut,
+        TweenLite.to(this.settings, this.settings.sections * 0.1, {
+            progress: - this.settings.length,
+            width: this.settings.sections * 0.9,
+            ease: Power2.easeOut,
             onComplete: () => 
             {
                 this.state = SqwiggleState.ended;
@@ -46,6 +49,7 @@ export class Sqwiggle
     public update()
     {
         this.sqwig.style.strokeDashoffset = `${this.settings.progress}`;
+        this.sqwig.style.strokeWidth = `${this.settings.width}px`;
     }
 
     private createLine():string
@@ -63,21 +67,25 @@ export class Sqwiggle
 
         let steps = this.settings.sections;
         let step = 0;
-        let getNewDirection = () => Math.random() < 0.5 ? -1 : 1;
+        let getNewDirection = (direction: string, goAnywhere:boolean) => 
+        {
+            if(!goAnywhere && this.settings['direction' + direction.toUpperCase()] != 0) return this.settings['direction' + direction.toUpperCase()];
+            return Math.random() < 0.5 ? -1 : 1;
+        }
 
         while(step < steps * 2)
         {
             step++;
-            x += dx * this.grid;
-            y += dy * this.grid;
+            x += (dx + (step/ 100)) * this.grid;
+            y += (dy + (step/ 100)) * this.grid;
             if(step != 1) path.push(',');
             path.push('' + x);
             path.push('' + y);
             
-            if(step > 1 && step % 2 != 0)
+            if(step % 2 != 0)
             {
-                dx = dx == 0 ? getNewDirection() : 0;
-                dy = dy == 0 ? getNewDirection() : 0;
+                dx = dx == 0 ? getNewDirection('x', step > 8) : 0;
+                dy = dy == 0 ? getNewDirection('y', step > 8) : 0;
             }
         }
         

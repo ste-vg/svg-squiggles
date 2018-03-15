@@ -6,6 +6,7 @@ export interface SqwiggleSettings
     directionY: number;
     length?: number;
     sections: number;
+    width?: number;
     chunkLength?: number;
     color?: string;
     progress?: number;
