@@ -43,11 +43,8 @@ export class App
 			for(let i = 0; i < 3; i++) this.createSqwigFromMouse(position);
 		})
 
-		input.ends.subscribe((position:Position) => 
-		{
-			this.burst(true);
-		})
-
+		input.starts.subscribe((position:Position) => this.lastMousePosition = position)
+		input.ends.subscribe((position:Position) => this.burst(true))
 
 		if(location.pathname.match(/fullcpgrid/i)) setInterval(() => this.burst(false), 1000)
 
